@@ -1,7 +1,13 @@
 package com.environment.attribute.commands;
 
 import com.environment.attribute.commands.arguments.CustomResourceArgument;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -11,14 +17,20 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.TriState;
-import net.minecraft.world.attribute.AttributeType;
-import net.minecraft.world.attribute.AttributeTypes;
-import net.minecraft.world.attribute.EnvironmentAttribute;
-import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.util.Util;
+import net.minecraft.world.attribute.*;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class EnvironmentAttributeCommand {
     private static final String TAG_VALUE = "value";
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final EnvironmentAttribute<?>[] VISUAL_COLOR_ATTRIBUTE = new EnvironmentAttribute[]{EnvironmentAttributes.SKY_COLOR, EnvironmentAttributes.FOG_COLOR, EnvironmentAttributes.WATER_FOG_COLOR, EnvironmentAttributes.CLOUD_COLOR, EnvironmentAttributes.SUNRISE_SUNSET_COLOR, EnvironmentAttributes.BLOCK_LIGHT_TINT, EnvironmentAttributes.SKY_LIGHT_COLOR, EnvironmentAttributes.NIGHT_VISION_COLOR, EnvironmentAttributes.AMBIENT_LIGHT_COLOR};
     private static final EnvironmentAttribute<?>[] VISUAL_FOG_DISTANCE_ATTRIBUTE = new EnvironmentAttribute[]{EnvironmentAttributes.FOG_START_DISTANCE, EnvironmentAttributes.FOG_END_DISTANCE, EnvironmentAttributes.WATER_FOG_START_DISTANCE, EnvironmentAttributes.WATER_FOG_END_DISTANCE, EnvironmentAttributes.SKY_FOG_END_DISTANCE, EnvironmentAttributes.CLOUD_FOG_END_DISTANCE};
 
@@ -36,6 +48,12 @@ public class EnvironmentAttributeCommand {
                         .executes(c -> EnvironmentAttributeCommand.getSetValue(c.getSource(), VISUAL_COLOR_ATTRIBUTE))
                 ).then(Commands.literal("getfogdistance")
                         .executes(c -> EnvironmentAttributeCommand.getSetValue(c.getSource(), VISUAL_FOG_DISTANCE_ATTRIBUTE))
+                ).then(Commands.literal("export")
+                        .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
+                        .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), false))
+                ).then(Commands.literal("exportdefault")
+                        .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
+                        .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), true))
                 )
         );
     }
@@ -51,11 +69,6 @@ public class EnvironmentAttributeCommand {
         } else {
             value = (Value)source.getLevel().environmentAttributes().getDimensionValue(attribute);
         }
-        /*
-        if (value == null) {
-            source.sendFailure(Component.translatable("commands.environment_attribute.cannot_get_value", attribute.toString()));
-            return 0;
-        }*/
         if (attribute.type() == AttributeTypes.BOOLEAN) {
             source.sendSuccess(() -> Component.translatable("commands.environment_attribute.success", attribute.toString(), (Boolean)value ? Component.literal("true").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("false").withStyle(s -> s.withColor(ChatFormatting.RED))), true);
         } else if (attribute.type() == AttributeTypes.TRI_STATE) {
@@ -89,6 +102,44 @@ public class EnvironmentAttributeCommand {
     private static int getSetValue(CommandSourceStack source, EnvironmentAttribute<?>[] attribute_sets){
         for(EnvironmentAttribute<?> attribute: attribute_sets){
             EnvironmentAttributeCommand.getValue(source, attribute);
+        }
+        return 1;
+    }
+
+    private static <Value> int export(CommandSourceStack source, boolean exportDefaultValue){
+        EnvironmentAttributeMap.Builder generatedAttributes = EnvironmentAttributeMap.builder();
+        source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {
+            if (exportDefaultValue){
+                generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), (Value)attribute.value().defaultValue());
+            } else {
+                if (attribute.value().isPositional()){
+                    generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), (Value)source.getLevel().environmentAttributes().getValue(attribute.value(), source.getPosition()));
+                } else {
+                    generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), (Value)source.getLevel().environmentAttributes().getDimensionValue(attribute.value()));
+                }
+            }
+        });
+        EnvironmentAttributeMap generatedAttributesMap = generatedAttributes.build();
+        JsonElement json = (JsonElement)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)JsonOps.INSTANCE, generatedAttributesMap).getOrThrow();
+        Path directory = source.getServer().getFile("debug");
+        String filename = "environment-attribute-" + (exportDefaultValue ? "default-" : "") + Util.getFilenameFormattedDateTime() + ".json";
+        try {
+            Files.createDirectories(directory);
+            try (BufferedWriter outputWriter = Files.newBufferedWriter(directory.resolve(filename), StandardCharsets.UTF_8);){
+                GSON.toJson(JsonParser.parseString(GsonHelper.toStableString(json)), GSON.newJsonWriter(outputWriter));
+            }
+        } catch (IOException e){
+            if (exportDefaultValue) {
+                source.sendFailure(Component.translatable("commands.environment_attribute.export.default.fail"));
+            } else {
+                source.sendFailure(Component.translatable("commands.environment_attribute.export.fail"));
+            }
+            return 0;
+        }
+        if (exportDefaultValue) {
+            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.default.success", filename), true);
+        } else {
+            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.success", filename), true);
         }
         return 1;
     }

@@ -1,5 +1,8 @@
 {
-  "commands.environment_attribute.cannot_get_value": "无法获取环境属性“%s”的值",
   "commands.environment_attribute.default_value" : "环境属性“%s”的默认值为：%s",
+  "commands.environment_attribute.export.default.fail": "无法导出环境属性的默认值",
+  "commands.environment_attribute.export.default.success": "已将环境属性的默认值导出至%s",
+  "commands.environment_attribute.export.fail": "无法导出环境属性的值",
+  "commands.environment_attribute.export.success": "已将环境属性的值导出至%s",
   "commands.environment_attribute.success" : "环境属性“%s”的值为：%s"
 }
