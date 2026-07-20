@@ -1,9 +1,3 @@
 # Environment Attribute
 
-## Setup
-
-For setup instructions, please see the [Fabric Documentation page](https://docs.fabricmc.net/develop/getting-started/creating-a-project#setting-up) related to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This Mod has added a command 'environment_attribute', to get the value of server side environment attribute.
