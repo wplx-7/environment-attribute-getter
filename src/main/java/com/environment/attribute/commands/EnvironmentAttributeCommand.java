@@ -78,7 +78,7 @@ public class EnvironmentAttributeCommand {
             source.sendSuccess(() -> Component.translatable("commands.environment_attribute.default_value", attribute.toString(), NbtUtils.toPrettyComponent(StringTag.valueOf(((TriState)attribute.defaultValue()).getSerializedName()))), true);
         } else {
             CompoundTag tag = EnvironmentAttributeCommand.build(attribute.type(), attribute.defaultValue());
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.default_value", environmentAttribute.value().toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
+            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.default_value", attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
         }
         if (attribute.type().toFloat() != null) {
             return (int)((Float)attribute.defaultValue() * 1.0f);
