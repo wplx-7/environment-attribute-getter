@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "environment-attribute",
+	"version": "${version}",
+	"name": "Environment Attribute",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"wplx"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/environment-attribute/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.environment.attribute.EnvironmentAttribute"
+		],
+		"client": [
+			"com.environment.attribute.client.EnvironmentAttributeClient"
+		],
+		"fabric-datagen": [
+			"com.environment.attribute.client.EnvironmentAttributeDataGenerator"
+		]
+	},
+	"mixins": [
+		"environment-attribute.mixins.json",
+		{
+			"config": "environment-attribute.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

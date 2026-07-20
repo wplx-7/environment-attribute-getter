@@ -1,0 +1,5 @@
+{
+  "commands.environment_attribute.cannot_get_value": "无法获取环境属性“%s”的值",
+  "commands.environment_attribute.default_value" : "环境属性“%s”的默认值为：%s",
+  "commands.environment_attribute.success" : "环境属性“%s”的值为：%s"
+}

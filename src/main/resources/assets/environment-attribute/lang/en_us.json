@@ -1,0 +1,5 @@
+{
+  "commands.environment_attribute.cannot_get_value": "Unable to get the value of environment attribute '%s'",
+  "commands.environment_attribute.default_value": "The default value of environment attribute '%s' is: %s",
+  "commands.environment_attribute.success": "The value of environment attribute '%s' is: %s"
+}
