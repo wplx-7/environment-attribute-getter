@@ -37,17 +37,18 @@ public class EnvironmentAttributeCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         dispatcher.register(Commands.literal("environment_attribute")
                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                .then(Commands.literal("get")
+                .then(Commands.literal("query")
                         .then(Commands.argument("environment_attribute", ResourceArgument.resource(context, Registries.ENVIRONMENT_ATTRIBUTE))
-                                .executes(c -> EnvironmentAttributeCommand.getValue(c.getSource(), CustomResourceArgument.getEnvironmentAttribute(c, "environment_attribute")))
-                                .then(Commands.literal("default")
-                                        .executes(c -> EnvironmentAttributeCommand.getDefaultValue(c.getSource(), CustomResourceArgument.getEnvironmentAttribute(c, "environment_attribute")))
-                                )
+                                .executes(c -> EnvironmentAttributeCommand.query(c.getSource(), CustomResourceArgument.getEnvironmentAttribute(c, "environment_attribute"), false))
                         )
-                ).then(Commands.literal("getvisualcolor")
-                        .executes(c -> EnvironmentAttributeCommand.getSetValue(c.getSource(), VISUAL_COLOR_ATTRIBUTE))
-                ).then(Commands.literal("getfogdistance")
-                        .executes(c -> EnvironmentAttributeCommand.getSetValue(c.getSource(), VISUAL_FOG_DISTANCE_ATTRIBUTE))
+                ).then(Commands.literal("querydefault")
+                        .then(Commands.argument("environment_attribute", ResourceArgument.resource(context, Registries.ENVIRONMENT_ATTRIBUTE))
+                                .executes(c -> EnvironmentAttributeCommand.query(c.getSource(), CustomResourceArgument.getEnvironmentAttribute(c, "environment_attribute"), true))
+                        )
+                ).then(Commands.literal("queryvisualcolor")
+                        .executes(c -> EnvironmentAttributeCommand.queryMulti(c.getSource(), VISUAL_COLOR_ATTRIBUTE))
+                ).then(Commands.literal("queryfogdistance")
+                        .executes(c -> EnvironmentAttributeCommand.queryMulti(c.getSource(), VISUAL_FOG_DISTANCE_ATTRIBUTE))
                 ).then(Commands.literal("export")
                         .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                         .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), false))
@@ -58,50 +59,39 @@ public class EnvironmentAttributeCommand {
         );
     }
 
-    private static int getValue(CommandSourceStack source, Holder.Reference<EnvironmentAttribute<?>> environmentAttribute){
-        return EnvironmentAttributeCommand.getValue(source, environmentAttribute.value());
+    private static int query(CommandSourceStack source, Holder.Reference<EnvironmentAttribute<?>> environmentAttribute, boolean queryDefaultValue){
+        return EnvironmentAttributeCommand.query(source, environmentAttribute.value(), queryDefaultValue);
     }
 
-    private static <Value> int getValue(CommandSourceStack source, EnvironmentAttribute<Value> attribute){
+    private static <Value> int query(CommandSourceStack source, EnvironmentAttribute<Value> attribute, boolean queryDefaultValue){
         Value value;
-        if (attribute.isPositional()) {
-            value = (Value)source.getLevel().environmentAttributes().getValue(attribute, source.getPosition());
+        String message = queryDefaultValue ? "commands.environment_attribute.query.default": "commands.environment_attribute.query";
+        if (queryDefaultValue) {
+            value = attribute.defaultValue();
         } else {
-            value = (Value)source.getLevel().environmentAttributes().getDimensionValue(attribute);
+            if (attribute.isPositional()) {
+                value = source.getLevel().environmentAttributes().getValue(attribute, source.getPosition());
+            } else {
+                value = source.getLevel().environmentAttributes().getDimensionValue(attribute);
+            }
         }
         if (attribute.type() == AttributeTypes.BOOLEAN) {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.success", attribute.toString(), (Boolean)value ? Component.literal("true").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("false").withStyle(s -> s.withColor(ChatFormatting.RED))), true);
+            source.sendSuccess(() -> Component.translatable(message, attribute.toString(), (Boolean)value ? Component.literal("true").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("false").withStyle(s -> s.withColor(ChatFormatting.RED))), true);
         } else if (attribute.type() == AttributeTypes.TRI_STATE) {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.success", attribute.toString(), NbtUtils.toPrettyComponent(StringTag.valueOf(((TriState)value).getSerializedName()))), true);
+            source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(StringTag.valueOf(((TriState)value).getSerializedName()))), true);
         } else {
-            CompoundTag tag = EnvironmentAttributeCommand.build(attribute.type(), value);
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.success", attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
+            CompoundTag tag = EnvironmentAttributeCommand.buildNbt(attribute.type(), value);
+            source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
         }
         if (attribute.type().toFloat() != null) {
-            return (int)((Float)value * 1.0f);
+            return (int)attribute.type().toFloat(value);
         }
         return 1;
     }
 
-    private static <Value> int getDefaultValue(CommandSourceStack source, Holder.Reference<EnvironmentAttribute<?>> environmentAttribute){
-        EnvironmentAttribute<Value> attribute = (EnvironmentAttribute<Value>)environmentAttribute.value();
-        if (attribute.type() == AttributeTypes.BOOLEAN) {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.default_value", attribute.toString(), (Boolean)attribute.defaultValue() ? Component.literal("true").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("false").withStyle(s -> s.withColor(ChatFormatting.RED))), true);
-        } else if (attribute.type() == AttributeTypes.TRI_STATE) {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.default_value", attribute.toString(), NbtUtils.toPrettyComponent(StringTag.valueOf(((TriState)attribute.defaultValue()).getSerializedName()))), true);
-        } else {
-            CompoundTag tag = EnvironmentAttributeCommand.build(attribute.type(), attribute.defaultValue());
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.default_value", attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
-        }
-        if (attribute.type().toFloat() != null) {
-            return (int)((Float)attribute.defaultValue() * 1.0f);
-        }
-        return 1;
-    }
-
-    private static int getSetValue(CommandSourceStack source, EnvironmentAttribute<?>[] attribute_sets){
+    private static int queryMulti(CommandSourceStack source, EnvironmentAttribute<?>[] attribute_sets){
         for(EnvironmentAttribute<?> attribute: attribute_sets){
-            EnvironmentAttributeCommand.getValue(source, attribute);
+            EnvironmentAttributeCommand.query(source, attribute, false);
         }
         return 1;
     }
@@ -125,7 +115,7 @@ public class EnvironmentAttributeCommand {
         String filename = "environment-attribute-" + (exportDefaultValue ? "default-" : "") + Util.getFilenameFormattedDateTime() + ".json";
         try {
             Files.createDirectories(directory);
-            try (BufferedWriter outputWriter = Files.newBufferedWriter(directory.resolve(filename), StandardCharsets.UTF_8);){
+            try (BufferedWriter outputWriter = Files.newBufferedWriter(directory.resolve(filename), StandardCharsets.UTF_8)){
                 GSON.toJson(JsonParser.parseString(GsonHelper.toStableString(json)), GSON.newJsonWriter(outputWriter));
             }
         } catch (IOException e){
@@ -144,9 +134,9 @@ public class EnvironmentAttributeCommand {
         return 1;
     }
 
-    private static <Value> CompoundTag build(AttributeType<Value> attributeType, Value value){
+    private static <Value> CompoundTag buildNbt(AttributeType<Value> attributeType, Value value){
         CompoundTag tag = new CompoundTag();
-        tag.put(TAG_VALUE, (Tag)attributeType.valueCodec().encodeStart(NbtOps.INSTANCE, value).getOrThrow());
+        tag.put(TAG_VALUE, attributeType.valueCodec().encodeStart(NbtOps.INSTANCE, value).getOrThrow());
         return tag;
     }
 }
