@@ -6,6 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.ChatFormatting;
@@ -21,6 +24,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.TriState;
 import net.minecraft.util.Util;
 import net.minecraft.world.attribute.*;
+import org.slf4j.Logger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,6 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class EnvironmentAttributeCommand {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final SimpleCommandExceptionType ERROR_EXPORT_FAILURE = new SimpleCommandExceptionType(Component.translatable("commands.environment_attribute.export.io_failure"));
     private static final String TAG_VALUE = "value";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final EnvironmentAttribute<?>[] VISUAL_COLOR_ATTRIBUTE = new EnvironmentAttribute[]{EnvironmentAttributes.SKY_COLOR, EnvironmentAttributes.FOG_COLOR, EnvironmentAttributes.WATER_FOG_COLOR, EnvironmentAttributes.CLOUD_COLOR, EnvironmentAttributes.SUNRISE_SUNSET_COLOR, EnvironmentAttributes.BLOCK_LIGHT_TINT, EnvironmentAttributes.SKY_LIGHT_COLOR, EnvironmentAttributes.NIGHT_VISION_COLOR, EnvironmentAttributes.AMBIENT_LIGHT_COLOR};
@@ -96,7 +102,7 @@ public class EnvironmentAttributeCommand {
         return 1;
     }
 
-    private static <Value> int export(CommandSourceStack source, boolean exportDefaultValue){
+    private static <Value> int export(CommandSourceStack source, boolean exportDefaultValue) throws CommandSyntaxException {
         EnvironmentAttributeMap.Builder generatedAttributes = EnvironmentAttributeMap.builder();
         source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {
             if (exportDefaultValue){
@@ -119,12 +125,8 @@ public class EnvironmentAttributeCommand {
                 GSON.toJson(JsonParser.parseString(GsonHelper.toStableString(json)), GSON.newJsonWriter(outputWriter));
             }
         } catch (IOException e){
-            if (exportDefaultValue) {
-                source.sendFailure(Component.translatable("commands.environment_attribute.export.default.fail"));
-            } else {
-                source.sendFailure(Component.translatable("commands.environment_attribute.export.fail"));
-            }
-            return 0;
+            LOGGER.warn("Failed to export environment attribute data at {}", directory.toAbsolutePath(), e);
+            throw ERROR_EXPORT_FAILURE.create();
         }
         if (exportDefaultValue) {
             source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.default.success", filename), true);

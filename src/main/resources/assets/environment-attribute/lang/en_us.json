@@ -1,7 +1,6 @@
 {
-  "commands.environment_attribute.export.default.fail": "Unable to export the default value of environment attributes",
   "commands.environment_attribute.export.default.success": "Success to export the default value of environment attributes to %s",
-  "commands.environment_attribute.export.fail": "Unable to export the value of environment attributes",
+  "commands.environment_attribute.export.io_failure": "Can't export environment attribute. Check logs",
   "commands.environment_attribute.export.success": "Success to export the value of environment attributes to %s",
   "commands.environment_attribute.query": "The value of environment attribute '%s' is: %s",
   "commands.environment_attribute.query.default": "The default value of environment attribute '%s' is: %s"
