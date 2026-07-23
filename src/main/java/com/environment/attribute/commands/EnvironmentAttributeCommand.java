@@ -70,17 +70,8 @@ public class EnvironmentAttributeCommand {
     }
 
     private static <Value> int query(CommandSourceStack source, EnvironmentAttribute<Value> attribute, boolean queryDefaultValue){
-        Value value;
         String message = queryDefaultValue ? "commands.environment_attribute.query.default": "commands.environment_attribute.query";
-        if (queryDefaultValue) {
-            value = attribute.defaultValue();
-        } else {
-            if (attribute.isPositional()) {
-                value = source.getLevel().environmentAttributes().getValue(attribute, source.getPosition());
-            } else {
-                value = source.getLevel().environmentAttributes().getDimensionValue(attribute);
-            }
-        }
+        Value value = EnvironmentAttributeCommand.getValue(source, attribute, queryDefaultValue);
         if (attribute.type() == AttributeTypes.BOOLEAN) {
             source.sendSuccess(() -> Component.translatable(message, attribute.toString(), (Boolean)value ? Component.literal("true").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("false").withStyle(s -> s.withColor(ChatFormatting.RED))), true);
         } else if (attribute.type() == AttributeTypes.TRI_STATE) {
@@ -105,15 +96,7 @@ public class EnvironmentAttributeCommand {
     private static <Value> int export(CommandSourceStack source, boolean exportDefaultValue) throws CommandSyntaxException {
         EnvironmentAttributeMap.Builder generatedAttributes = EnvironmentAttributeMap.builder();
         source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {
-            if (exportDefaultValue){
-                generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), (Value)attribute.value().defaultValue());
-            } else {
-                if (attribute.value().isPositional()){
-                    generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), (Value)source.getLevel().environmentAttributes().getValue(attribute.value(), source.getPosition()));
-                } else {
-                    generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), (Value)source.getLevel().environmentAttributes().getDimensionValue(attribute.value()));
-                }
-            }
+            generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), EnvironmentAttributeCommand.getValue(source, (EnvironmentAttribute<Value>)attribute.value(), exportDefaultValue));
         });
         EnvironmentAttributeMap generatedAttributesMap = generatedAttributes.build();
         JsonElement json = (JsonElement)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)JsonOps.INSTANCE, generatedAttributesMap).getOrThrow();
@@ -134,6 +117,18 @@ public class EnvironmentAttributeCommand {
             source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.success", filename), true);
         }
         return 1;
+    }
+
+    private static <Value> Value getValue(CommandSourceStack source, EnvironmentAttribute<Value> attribute, boolean defaultValue) {
+        if (defaultValue) {
+            return attribute.defaultValue();
+        } else {
+            if (attribute.isPositional()) {
+                return source.getLevel().environmentAttributes().getValue(attribute, source.getPosition());
+            } else {
+                return source.getLevel().environmentAttributes().getDimensionValue(attribute);
+            }
+        }
     }
 
     private static <Value> CompoundTag buildNbt(AttributeType<Value> attributeType, Value value){
