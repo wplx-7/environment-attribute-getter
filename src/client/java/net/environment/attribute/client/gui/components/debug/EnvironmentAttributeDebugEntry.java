@@ -1,14 +1,14 @@
 package net.environment.attribute.client.gui.components.debug;
 
-import net.minecraft.client.Camera;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.debug.DebugEntryCategory;
 import net.minecraft.client.gui.components.debug.DebugScreenDisplayer;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.attribute.AttributeTypes;
 import net.minecraft.world.attribute.EnvironmentAttribute;
 import net.minecraft.world.level.Level;
@@ -46,8 +46,7 @@ public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
         if (attribute.type() == AttributeTypes.BOOLEAN) {
             return (Boolean)value ? "true" : "false";
         }
-        CompoundTag tag = new CompoundTag();
-        tag.put(TAG_VALUE, attribute.valueCodec().encodeStart(NbtOps.INSTANCE, value).getOrThrow());
-        return NbtUtils.prettyPrint(tag.get(TAG_VALUE), true);
+        JsonElement json = (JsonElement)attribute.valueCodec().encodeStart((DynamicOps) JsonOps.INSTANCE, value).getOrThrow();
+        return GsonHelper.toStableString(json);
     }
 }
