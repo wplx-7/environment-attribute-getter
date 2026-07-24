@@ -1,6 +1,6 @@
-package com.environment.attribute;
+package net.environment.attribute;
 
-import com.environment.attribute.commands.EnvironmentAttributeCommand;
+import net.environment.attribute.commands.EnvironmentAttributeCommand;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;

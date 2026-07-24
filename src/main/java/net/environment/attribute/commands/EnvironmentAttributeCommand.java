@@ -1,6 +1,6 @@
-package com.environment.attribute.commands;
+package net.environment.attribute.commands;
 
-import com.environment.attribute.commands.arguments.CustomResourceArgument;
+import net.environment.attribute.commands.arguments.CustomResourceArgument;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -55,10 +55,10 @@ public class EnvironmentAttributeCommand {
                         .executes(c -> EnvironmentAttributeCommand.queryMulti(c.getSource(), VISUAL_COLOR_ATTRIBUTE))
                 ).then(Commands.literal("queryfogdistance")
                         .executes(c -> EnvironmentAttributeCommand.queryMulti(c.getSource(), VISUAL_FOG_DISTANCE_ATTRIBUTE))
-                ).then(Commands.literal("export")
+                ).then(Commands.literal("exportall")
                         .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                         .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), false))
-                ).then(Commands.literal("exportdefault")
+                ).then(Commands.literal("exportdallefault")
                         .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                         .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), true))
                 )
@@ -95,9 +95,7 @@ public class EnvironmentAttributeCommand {
 
     private static <Value> int export(CommandSourceStack source, boolean exportDefaultValue) throws CommandSyntaxException {
         EnvironmentAttributeMap.Builder generatedAttributes = EnvironmentAttributeMap.builder();
-        source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {
-            generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), EnvironmentAttributeCommand.getValue(source, (EnvironmentAttribute<Value>)attribute.value(), exportDefaultValue));
-        });
+        source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), EnvironmentAttributeCommand.getValue(source, (EnvironmentAttribute<Value>)attribute.value(), exportDefaultValue));});
         EnvironmentAttributeMap generatedAttributesMap = generatedAttributes.build();
         JsonElement json = (JsonElement)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)JsonOps.INSTANCE, generatedAttributesMap).getOrThrow();
         Path directory = source.getServer().getFile("debug");

@@ -1,4 +1,4 @@
-package com.environment.attribute.client;
+package net.environment.attribute.client;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;

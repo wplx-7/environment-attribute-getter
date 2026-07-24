@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "com.environment.attribute.client.mixin",
+	"package": "net.environment.attribute.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
 		"ExampleClientMixin"

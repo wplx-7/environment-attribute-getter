@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "com.environment.attribute.mixin",
+	"package": "net.environment.attribute.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
 		"ExampleMixin"

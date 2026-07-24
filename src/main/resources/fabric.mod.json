@@ -3,7 +3,7 @@
 	"id": "environment-attribute",
 	"version": "${version}",
 	"name": "Environment Attribute",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "",
 	"authors": [
 		"wplx"
 	],
@@ -16,13 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.environment.attribute.EnvironmentAttribute"
+			"net.environment.attribute.EnvironmentAttribute"
 		],
 		"client": [
-			"com.environment.attribute.client.EnvironmentAttributeClient"
+			"net.environment.attribute.client.EnvironmentAttributeClient"
 		],
 		"fabric-datagen": [
-			"com.environment.attribute.client.EnvironmentAttributeDataGenerator"
+			"net.environment.attribute.client.EnvironmentAttributeDataGenerator"
 		]
 	},
 	"mixins": [
