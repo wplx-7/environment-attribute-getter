@@ -1,4 +1,4 @@
-package net.environment.attribute.client.mixin;
+package net.environmentattributegetter.client.mixin;
 
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;

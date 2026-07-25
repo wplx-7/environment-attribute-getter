@@ -1,9 +1,9 @@
-package net.environment.attribute.client;
+package net.environmentattributegetter.client;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
-public class EnvironmentAttributeDataGenerator implements DataGeneratorEntrypoint {
+public class EnvironmentAttributeGetterDataGenerator implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 

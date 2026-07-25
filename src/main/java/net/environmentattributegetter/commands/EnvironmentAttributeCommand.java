@@ -1,6 +1,6 @@
-package net.environment.attribute.commands;
+package net.environmentattributegetter.commands;
 
-import net.environment.attribute.commands.arguments.CustomResourceArgument;
+import net.environmentattributegetter.commands.arguments.CustomResourceArgument;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

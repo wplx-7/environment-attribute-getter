@@ -1,4 +1,4 @@
-package net.environment.attribute.commands.arguments;
+package net.environmentattributegetter.commands.arguments;
 
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

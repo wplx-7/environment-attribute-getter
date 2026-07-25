@@ -1,4 +1,4 @@
-package net.environment.attribute.client.mixin;
+package net.environmentattributegetter.client.mixin;
 
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;

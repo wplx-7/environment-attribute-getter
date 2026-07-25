@@ -1,4 +1,4 @@
-package net.environment.attribute.client.gui.components.debug;
+package net.environmentattributegetter.client.gui.components.debug;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DynamicOps;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 
 public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
-    public static final Identifier GROUP = Identifier.fromNamespaceAndPath("environment_attribute", "value");
+    public static final Identifier GROUP = Identifier.fromNamespaceAndPath("environment_attribute_getter", "value");
     private final EnvironmentAttribute<?> attribute;
 
     public EnvironmentAttributeDebugEntry(EnvironmentAttribute<?> attribute){
@@ -39,7 +39,7 @@ public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
 
     @Override
     public DebugEntryCategory category() {
-        return EnvironmentAttributeEntries.ENVIRONMENT_ATTRIBUTE;
+        return EnvironmentAttributeDebugEntries.ENVIRONMENT_ATTRIBUTE;
     }
 
     private <Value> String getText(){

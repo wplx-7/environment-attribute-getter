@@ -1,34 +1,31 @@
 {
 	"schemaVersion": 1,
-	"id": "environment-attribute",
+	"id": "environment-attribute-getter",
 	"version": "${version}",
-	"name": "Environment Attribute",
-	"description": "",
+	"name": "Environment Attribute Getter",
+	"description": "Provider more ways to get environment attribute",
 	"authors": [
-		"wplx"
+		"wplx-7"
 	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
+	"contact": {},
 	"license": "MIT",
-	"icon": "assets/environment-attribute/icon.png",
+	"icon": "assets/environment_attribute_getter/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.environment.attribute.EnvironmentAttribute"
+			"net.environmentattributegetter.EnvironmentAttributeGetter"
 		],
 		"client": [
-			"net.environment.attribute.client.EnvironmentAttributeClient"
+			"net.environmentattributegetter.client.EnvironmentAttributeGetterClient"
 		],
 		"fabric-datagen": [
-			"net.environment.attribute.client.EnvironmentAttributeDataGenerator"
+			"net.environmentattributegetter.client.EnvironmentAttributeGetterDataGenerator"
 		]
 	},
 	"mixins": [
-		"environment-attribute.mixins.json",
+		"environment-attribute-getter.mixins.json",
 		{
-			"config": "environment-attribute.client.mixins.json",
+			"config": "environment-attribute-getter.client.mixins.json",
 			"environment": "client"
 		}
 	],

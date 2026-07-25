@@ -18,7 +18,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"environment-attribute" {
+		"environment-attribute-getter" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
