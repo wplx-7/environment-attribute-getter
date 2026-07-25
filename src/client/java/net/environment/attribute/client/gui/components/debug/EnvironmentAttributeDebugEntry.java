@@ -9,16 +9,14 @@ import net.minecraft.client.gui.components.debug.DebugScreenDisplayer;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.attribute.AttributeTypes;
 import net.minecraft.world.attribute.EnvironmentAttribute;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 
 public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
-    public static final Identifier GROUP = Identifier.fromNamespaceAndPath("environment_attribute","value");
-    private static final String TAG_VALUE = "value";
-    private EnvironmentAttribute<?> attribute;
+    public static final Identifier GROUP = Identifier.fromNamespaceAndPath("environment_attribute", "value");
+    private final EnvironmentAttribute<?> attribute;
 
     public EnvironmentAttributeDebugEntry(EnvironmentAttribute<?> attribute){
         this.attribute = attribute;
@@ -38,14 +36,11 @@ public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
     }
 
     private <Value> String getText(){
-        EnvironmentAttribute<Value> attribute = (EnvironmentAttribute<Value>)this.attribute;
-        Value value = Minecraft.getInstance().gameRenderer.mainCamera().attributeProbe().getValue(attribute, 1.0f);
         if (!attribute.isSyncable()) {
             return "NULL";
         }
-        if (attribute.type() == AttributeTypes.BOOLEAN) {
-            return (Boolean)value ? "true" : "false";
-        }
+        EnvironmentAttribute<Value> attribute = (EnvironmentAttribute<Value>)this.attribute;
+        Value value = Minecraft.getInstance().gameRenderer.mainCamera().attributeProbe().getValue(attribute, 1.0f);
         JsonElement json = (JsonElement)attribute.valueCodec().encodeStart((DynamicOps) JsonOps.INSTANCE, value).getOrThrow();
         return GsonHelper.toStableString(json);
     }
