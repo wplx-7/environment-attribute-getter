@@ -27,7 +27,14 @@ public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
         if (serverOrClientLevel == null || Minecraft.getInstance().getCameraEntity() == null) {
             return;
         }
-        displayer.addToGroup(GROUP,attribute.toString() + ": " + this.getText());
+        StringBuilder content = new StringBuilder(attribute.toString());
+        content.append(": ");
+        if (!attribute.isSyncable() && serverChunk == null) {
+            content.append("??");
+        } else {
+            content.append(this.getText());
+        }
+        displayer.addToGroup(GROUP, content.toString());
     }
 
     @Override
@@ -36,9 +43,6 @@ public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
     }
 
     private <Value> String getText(){
-        if (!attribute.isSyncable()) {
-            return "NULL";
-        }
         EnvironmentAttribute<Value> attribute = (EnvironmentAttribute<Value>)this.attribute;
         Value value = Minecraft.getInstance().gameRenderer.mainCamera().attributeProbe().getValue(attribute, 1.0f);
         JsonElement json = (JsonElement)attribute.valueCodec().encodeStart((DynamicOps) JsonOps.INSTANCE, value).getOrThrow();

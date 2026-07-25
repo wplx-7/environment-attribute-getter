@@ -10,7 +10,7 @@ import net.minecraft.world.attribute.EnvironmentAttribute;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 
 public class EnvironmentAttributeEntries {
-    public static final DebugEntryCategory ENVIRONMENT_ATTRIBUTE = new DebugEntryCategory(Component.translatable("debug.options.category.environment_attribute"), 3.0f);
+    public static final DebugEntryCategory ENVIRONMENT_ATTRIBUTE = new DebugEntryCategory(Component.translatable("debug.options.category.environment_attribute"), 20.0f);
     public static final Identifier FOG_COLOR = EnvironmentAttributeEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.FOG_COLOR);
     public static final Identifier FOG_START_DISTANCE = EnvironmentAttributeEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.FOG_START_DISTANCE);
     public static final Identifier FOG_END_DISTANCE = EnvironmentAttributeEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.FOG_END_DISTANCE);
