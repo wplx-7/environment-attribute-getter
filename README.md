@@ -1,8 +1,15 @@
-# 环境属性查看器
+# Environment Attribute Getter
 
-这个mod提供了两个可以在游戏内查看环境属性的方法：
+**English** | [中文](README-zh.md)
 
-- 命令`environment_attribute query <environment_attribute>`
-- 显示环境属性的调试选项，默认只有部分对客户端有意义的环境属性可以显示。
+A mod allows you to get the value of environment attribute in the world.
 
-权限等级为4时，可以使用命令`environment_attribute exportall`导出当前位置的全部环境属性。
+## Content
+
+This mod provides two ways to get emviromment attribute:
+
+- Add a command `/environment_attribute`
+  - Get the current server value `/environment_attribute query <environment attribute id>`
+  - Export all of current server value to file `/environment_attribute exportall`
+- Add a new debug option category, including all of the debug options of environment attribute
+  - Only available for some of environment attributes. These attributes will be synced to the client-side, and not use complex data type.
