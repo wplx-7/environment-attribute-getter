@@ -3,7 +3,6 @@
 	"package": "net.environmentattributegetter.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"ExampleClientMixin",
 		"DebugScreenEntriesMixin"
 	],
 	"injectors": {
