@@ -1,9 +1,9 @@
 {
 	"required": true,
-	"package": "net.environmentattributegetter.client.mixin",
+	"package": "io.github.wplx_7.environmentattributegetter.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"DebugScreenEntriesMixin"
+      "DebugScreenEntriesMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

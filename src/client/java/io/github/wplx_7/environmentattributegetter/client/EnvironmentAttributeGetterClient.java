@@ -1,6 +1,6 @@
-package net.environmentattributegetter.client;
+package io.github.wplx_7.environmentattributegetter.client;
 
-import net.environmentattributegetter.client.gui.components.debug.EnvironmentAttributeDebugEntries;
+import io.github.wplx_7.environmentattributegetter.client.gui.components.debug.EnvironmentAttributeDebugEntries;
 import net.fabricmc.api.ClientModInitializer;
 
 public class EnvironmentAttributeGetterClient implements ClientModInitializer {

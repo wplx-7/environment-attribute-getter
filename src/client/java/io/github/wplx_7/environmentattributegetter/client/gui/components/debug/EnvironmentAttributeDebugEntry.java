@@ -1,4 +1,4 @@
-package net.environmentattributegetter.client.gui.components.debug;
+package io.github.wplx_7.environmentattributegetter.client.gui.components.debug;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DynamicOps;

@@ -3,5 +3,6 @@
   "commands.environment_attribute.export.io_failure": "无法导出环境属性，请检查日志",
   "commands.environment_attribute.export.success": "已将环境属性的值导出至%s",
   "commands.environment_attribute.query": "环境属性“%s”的值为：%s",
-  "commands.environment_attribute.query.default": "环境属性“%s”的默认值为：%s"
+  "commands.environment_attribute.query.default": "环境属性“%s”的默认值为：%s",
+  "debug.options.category.environment_attribute": "环境属性"
 }

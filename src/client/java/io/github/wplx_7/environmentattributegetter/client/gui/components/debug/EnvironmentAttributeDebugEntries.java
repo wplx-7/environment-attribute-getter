@@ -1,7 +1,7 @@
-package net.environmentattributegetter.client.gui.components.debug;
+package io.github.wplx_7.environmentattributegetter.client.gui.components.debug;
 
 
-import net.environmentattributegetter.client.mixin.DebugScreenEntriesMixin;
+import io.github.wplx_7.environmentattributegetter.client.mixin.DebugScreenEntriesMixin;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.debug.DebugEntryCategory;
 import net.minecraft.network.chat.Component;

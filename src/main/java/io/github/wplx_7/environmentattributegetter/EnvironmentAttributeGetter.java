@@ -1,6 +1,6 @@
-package net.environmentattributegetter;
+package io.github.wplx_7.environmentattributegetter;
 
-import net.environmentattributegetter.commands.EnvironmentAttributeCommand;
+import io.github.wplx_7.environmentattributegetter.commands.EnvironmentAttributeCommand;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;

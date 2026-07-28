@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "net.environmentattributegetter.mixin",
+	"package": "io.github.wplx_7.environmentattributegetter.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [],
 	"injectors": {

@@ -7,19 +7,21 @@
 	"authors": [
 		"wplx-7"
 	],
-	"contact": {},
+	"contact": {
+		"sources": "https://github.com/wplx-7/EnvironmentAttributeGetter"
+	},
 	"license": "MIT",
 	"icon": "assets/environment_attribute_getter/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.environmentattributegetter.EnvironmentAttributeGetter"
+			"io.github.wplx_7.environmentattributegetter.EnvironmentAttributeGetter"
 		],
 		"client": [
-			"net.environmentattributegetter.client.EnvironmentAttributeGetterClient"
+			"io.github.wplx_7.environmentattributegetter.client.EnvironmentAttributeGetterClient"
 		],
 		"fabric-datagen": [
-			"net.environmentattributegetter.client.EnvironmentAttributeGetterDataGenerator"
+			"io.github.wplx_7.environmentattributegetter.client.EnvironmentAttributeGetterDataGenerator"
 		]
 	},
 	"mixins": [

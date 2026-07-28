@@ -1,6 +1,6 @@
-package net.environmentattributegetter.commands;
+package io.github.wplx_7.environmentattributegetter.commands;
 
-import net.environmentattributegetter.commands.arguments.CustomResourceArgument;
+import io.github.wplx_7.environmentattributegetter.commands.arguments.CustomResourceArgument;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

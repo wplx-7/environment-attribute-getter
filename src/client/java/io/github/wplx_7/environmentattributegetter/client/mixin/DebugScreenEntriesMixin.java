@@ -1,4 +1,4 @@
-package net.environmentattributegetter.client.mixin;
+package io.github.wplx_7.environmentattributegetter.client.mixin;
 
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;
