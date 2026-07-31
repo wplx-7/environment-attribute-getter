@@ -14,11 +14,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 
-public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
-    public static final Identifier GROUP = Identifier.fromNamespaceAndPath("environment_attribute_getter", "value");
+public class DebugEntryEnvironmentAttribute implements DebugScreenEntry {
+    private static final Identifier GROUP = Identifier.fromNamespaceAndPath("environment_attribute_getter", "value");
     private final EnvironmentAttribute<?> attribute;
 
-    public EnvironmentAttributeDebugEntry(EnvironmentAttribute<?> attribute){
+    public DebugEntryEnvironmentAttribute(EnvironmentAttribute<?> attribute){
         this.attribute = attribute;
     }
 
@@ -39,7 +39,7 @@ public class EnvironmentAttributeDebugEntry implements DebugScreenEntry {
 
     @Override
     public DebugEntryCategory category() {
-        return EnvironmentAttributeDebugEntries.ENVIRONMENT_ATTRIBUTE;
+        return EnvironmentAttributeDebugScreenEntries.ENVIRONMENT_ATTRIBUTE;
     }
 
     private <Value> String getText(){
