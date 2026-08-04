@@ -37,8 +37,6 @@ public class EnvironmentAttributeCommand {
     private static final SimpleCommandExceptionType ERROR_EXPORT_FAILURE = new SimpleCommandExceptionType(Component.translatable("commands.environment_attribute.export.io_failure"));
     private static final String TAG_VALUE = "value";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final EnvironmentAttribute<?>[] VISUAL_COLOR_ATTRIBUTE = new EnvironmentAttribute[]{EnvironmentAttributes.SKY_COLOR, EnvironmentAttributes.FOG_COLOR, EnvironmentAttributes.WATER_FOG_COLOR, EnvironmentAttributes.CLOUD_COLOR, EnvironmentAttributes.SUNRISE_SUNSET_COLOR, EnvironmentAttributes.BLOCK_LIGHT_TINT, EnvironmentAttributes.SKY_LIGHT_COLOR, EnvironmentAttributes.NIGHT_VISION_COLOR, EnvironmentAttributes.AMBIENT_LIGHT_COLOR};
-    private static final EnvironmentAttribute<?>[] VISUAL_FOG_DISTANCE_ATTRIBUTE = new EnvironmentAttribute[]{EnvironmentAttributes.FOG_START_DISTANCE, EnvironmentAttributes.FOG_END_DISTANCE, EnvironmentAttributes.WATER_FOG_START_DISTANCE, EnvironmentAttributes.WATER_FOG_END_DISTANCE, EnvironmentAttributes.SKY_FOG_END_DISTANCE, EnvironmentAttributes.CLOUD_FOG_END_DISTANCE};
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         dispatcher.register(Commands.literal("environment_attribute")
@@ -51,14 +49,10 @@ public class EnvironmentAttributeCommand {
                         .then(Commands.argument("environment_attribute", ResourceArgument.resource(context, Registries.ENVIRONMENT_ATTRIBUTE))
                                 .executes(c -> EnvironmentAttributeCommand.query(c.getSource(), CustomResourceArgument.getEnvironmentAttribute(c, "environment_attribute"), true))
                         )
-                ).then(Commands.literal("queryvisualcolor")
-                        .executes(c -> EnvironmentAttributeCommand.queryMulti(c.getSource(), VISUAL_COLOR_ATTRIBUTE))
-                ).then(Commands.literal("queryfogdistance")
-                        .executes(c -> EnvironmentAttributeCommand.queryMulti(c.getSource(), VISUAL_FOG_DISTANCE_ATTRIBUTE))
                 ).then(Commands.literal("exportall")
                         .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                         .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), false))
-                ).then(Commands.literal("exportdallefault")
+                ).then(Commands.literal("exportalldefault")
                         .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                         .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), true))
                 )
@@ -82,13 +76,6 @@ public class EnvironmentAttributeCommand {
         }
         if (attribute.type().toFloat() != null) {
             return (int)attribute.type().toFloat(value);
-        }
-        return 1;
-    }
-
-    private static int queryMulti(CommandSourceStack source, EnvironmentAttribute<?>[] attribute_sets){
-        for(EnvironmentAttribute<?> attribute: attribute_sets){
-            EnvironmentAttributeCommand.query(source, attribute, false);
         }
         return 1;
     }
