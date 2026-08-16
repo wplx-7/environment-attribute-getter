@@ -71,7 +71,7 @@ public class EnvironmentAttributeCommand {
         } else if (attribute.type() == AttributeTypes.TRI_STATE) {
             source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(StringTag.valueOf(((TriState)value).getSerializedName()))), true);
         } else {
-            CompoundTag tag = EnvironmentAttributeCommand.buildNbt(attribute.type(), value);
+            CompoundTag tag = EnvironmentAttributeCommand.buildCompoundTag(attribute.type(), value);
             source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
         }
         if (attribute.type().toFloat() != null) {
@@ -85,8 +85,8 @@ public class EnvironmentAttributeCommand {
         source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), EnvironmentAttributeCommand.getValue(source, (EnvironmentAttribute<Value>)attribute.value(), exportDefaultValue));});
         EnvironmentAttributeMap generatedAttributesMap = generatedAttributes.build();
         JsonElement json = (JsonElement)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)JsonOps.INSTANCE, generatedAttributesMap).getOrThrow();
-        Path directory = source.getServer().getFile("debug");
-        String filename = "environment-attribute-" + (exportDefaultValue ? "default-" : "") + Util.getFilenameFormattedDateTime() + ".json";
+        Path directory = source.getServer().getFile("debug/environment_attribute");
+        String filename = (exportDefaultValue ? "default-" : "") + "environment-attribute-" + Util.getFilenameFormattedDateTime() + ".json";
         try {
             Files.createDirectories(directory);
             try (BufferedWriter outputWriter = Files.newBufferedWriter(directory.resolve(filename), StandardCharsets.UTF_8)){
@@ -96,10 +96,11 @@ public class EnvironmentAttributeCommand {
             LOGGER.warn("Failed to export environment attribute data at {}", directory.toAbsolutePath(), e);
             throw ERROR_EXPORT_FAILURE.create();
         }
+        String fullFilename = "debug/environment_attribute/" + filename;
         if (exportDefaultValue) {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.default.success", filename), true);
+            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.default.success", fullFilename), true);
         } else {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.success", filename), true);
+            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.success", fullFilename), true);
         }
         return 1;
     }
@@ -116,7 +117,7 @@ public class EnvironmentAttributeCommand {
         }
     }
 
-    private static <Value> CompoundTag buildNbt(AttributeType<Value> attributeType, Value value){
+    private static <Value> CompoundTag buildCompoundTag(AttributeType<Value> attributeType, Value value){
         CompoundTag tag = new CompoundTag();
         tag.put(TAG_VALUE, attributeType.valueCodec().encodeStart(NbtOps.INSTANCE, value).getOrThrow());
         return tag;

@@ -18,8 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DebugEntryEnvironmentAttribute implements DebugScreenEntry {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -45,9 +45,9 @@ public class DebugEntryEnvironmentAttribute implements DebugScreenEntry {
                 displayer.addToGroup(GROUP, content.toString());
             }
             else {
-                content.append("...");
+                content.append(value.getFirst());
                 displayer.addToGroup(GROUP, content.toString());
-                displayer.addToGroup(GROUP, value);
+                displayer.addToGroup(GROUP, value.stream().skip(1).collect(Collectors.toList()));
             }
         }
     }

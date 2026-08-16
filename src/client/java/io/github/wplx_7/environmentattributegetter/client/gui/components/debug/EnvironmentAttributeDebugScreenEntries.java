@@ -2,7 +2,6 @@ package io.github.wplx_7.environmentattributegetter.client.gui.components.debug;
 
 
 import io.github.wplx_7.environmentattributegetter.client.mixin.DebugScreenEntriesMixin;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.debug.DebugEntryCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -33,11 +32,11 @@ public class EnvironmentAttributeDebugScreenEntries {
     public static final Identifier SKY_LIGHT_FACTOR = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.SKY_LIGHT_FACTOR);
     public static final Identifier NIGHT_VISION_COLOR = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.NIGHT_VISION_COLOR);
     public static final Identifier AMBIENT_LIGHT_COLOR = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.AMBIENT_LIGHT_COLOR);
-    public static final Identifier DEFAULT_DRIPSTONE_PARTICLE = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.DEFAULT_DRIPSTONE_PARTICLE, SharedConstants.IS_RUNNING_IN_IDE);
-    public static final Identifier AMBIENT_PARTICLES = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.AMBIENT_PARTICLES, SharedConstants.IS_RUNNING_IN_IDE);
-    public static final Identifier BACKGROUND_MUSIC = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.BACKGROUND_MUSIC, SharedConstants.IS_RUNNING_IN_IDE);
+    public static final Identifier DEFAULT_DRIPSTONE_PARTICLE = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.DEFAULT_DRIPSTONE_PARTICLE);
+    public static final Identifier AMBIENT_PARTICLES = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.AMBIENT_PARTICLES);
+    public static final Identifier BACKGROUND_MUSIC = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.BACKGROUND_MUSIC);
     public static final Identifier MUSIC_VOLUME = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.MUSIC_VOLUME);
-    public static final Identifier AMBIENT_SOUNDS = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.AMBIENT_SOUNDS, SharedConstants.IS_RUNNING_IN_IDE);
+    public static final Identifier AMBIENT_SOUNDS = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.AMBIENT_SOUNDS);
     public static final Identifier FIREFLY_BUSH_SOUNDS = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.FIREFLY_BUSH_SOUNDS);
     public static final Identifier SKY_LIGHT_LEVEL = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.SKY_LIGHT_LEVEL);
     public static final Identifier WATER_EVAPORATES = EnvironmentAttributeDebugScreenEntries.registerEnvironmentAttributeEntry(EnvironmentAttributes.WATER_EVAPORATES);
