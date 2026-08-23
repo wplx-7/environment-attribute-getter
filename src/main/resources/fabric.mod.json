@@ -8,7 +8,7 @@
 		"wplx-7"
 	],
 	"contact": {
-		"sources": "https://github.com/wplx-7/EnvironmentAttributeGetter"
+		"sources": "https://github.com/wplx-7/environment-attribute-getter"
 	},
 	"license": "MIT",
 	"icon": "assets/environment_attribute_getter/icon.png",
