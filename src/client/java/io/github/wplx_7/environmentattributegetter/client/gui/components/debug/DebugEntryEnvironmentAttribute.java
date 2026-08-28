@@ -40,13 +40,9 @@ public class DebugEntryEnvironmentAttribute implements DebugScreenEntry {
         if (!attribute.isSyncable() && serverChunk == null) {
             content.append("??");
         } else {
-            if (value.size() == 1) {
-                content.append(this.getText());
-                displayer.addToGroup(GROUP, content.toString());
-            }
-            else {
-                content.append(value.getFirst());
-                displayer.addToGroup(GROUP, content.toString());
+            content.append(value.getFirst());
+            displayer.addToGroup(GROUP, content.toString());
+            if (value.size() > 1) {
                 displayer.addToGroup(GROUP, value.stream().skip(1).collect(Collectors.toList()));
             }
         }
