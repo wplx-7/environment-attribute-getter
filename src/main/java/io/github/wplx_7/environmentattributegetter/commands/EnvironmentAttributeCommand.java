@@ -1,5 +1,6 @@
 package io.github.wplx_7.environmentattributegetter.commands;
 
+import io.github.wplx_7.environmentattributegetter.EnvironmentAttributeGetter;
 import io.github.wplx_7.environmentattributegetter.commands.arguments.CustomResourceArgument;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -8,10 +9,8 @@ import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -21,7 +20,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.TriState;
 import net.minecraft.util.Util;
 import net.minecraft.world.attribute.*;
 import org.slf4j.Logger;
@@ -33,10 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class EnvironmentAttributeCommand {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = EnvironmentAttributeGetter.LOGGER;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final SimpleCommandExceptionType ERROR_EXPORT_FAILURE = new SimpleCommandExceptionType(Component.translatable("commands.environment_attribute.export.io_failure"));
     private static final String TAG_VALUE = "value";
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         dispatcher.register(Commands.literal("environment_attribute")
@@ -49,6 +47,10 @@ public class EnvironmentAttributeCommand {
                         .then(Commands.argument("environment_attribute", ResourceArgument.resource(context, Registries.ENVIRONMENT_ATTRIBUTE))
                                 .executes(c -> EnvironmentAttributeCommand.query(c.getSource(), CustomResourceArgument.getEnvironmentAttribute(c, "environment_attribute"), true))
                         )
+                ).then(Commands.literal("queryall")
+                        .executes(c -> EnvironmentAttributeCommand.queryAll(c.getSource(), false))
+                ).then(Commands.literal("queryalldefault")
+                        .executes(c -> EnvironmentAttributeCommand.queryAll(c.getSource(), true))
                 ).then(Commands.literal("exportall")
                         .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                         .executes(c -> EnvironmentAttributeCommand.export(c.getSource(), false))
@@ -65,26 +67,22 @@ public class EnvironmentAttributeCommand {
 
     private static <Value> int query(CommandSourceStack source, EnvironmentAttribute<Value> attribute, boolean queryDefaultValue){
         String message = queryDefaultValue ? "commands.environment_attribute.query.default": "commands.environment_attribute.query";
-        Value value = EnvironmentAttributeCommand.getValue(source, attribute, queryDefaultValue);
-        if (attribute.type() == AttributeTypes.BOOLEAN) {
-            source.sendSuccess(() -> Component.translatable(message, attribute.toString(), (Boolean)value ? Component.literal("true").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("false").withStyle(s -> s.withColor(ChatFormatting.RED))), true);
-        } else if (attribute.type() == AttributeTypes.TRI_STATE) {
-            source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(StringTag.valueOf(((TriState)value).getSerializedName()))), true);
-        } else {
-            CompoundTag tag = EnvironmentAttributeCommand.buildCompoundTag(attribute.type(), value);
-            source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
-        }
-        if (attribute.type().toFloat() != null) {
-            return (int)attribute.type().toFloat(value);
-        }
+        CompoundTag tag = new CompoundTag();
+        tag.put(TAG_VALUE, attribute.type().valueCodec().encodeStart(NbtOps.INSTANCE, EnvironmentAttributeCommand.getValue(source, attribute, queryDefaultValue)).getOrThrow());
+        source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
+        return 1;
+    }
+
+    private static <Value> int queryAll(CommandSourceStack source, boolean queryDefaultValue){
+        String message = queryDefaultValue ? "commands.environment_attribute.query_all.default": "commands.environment_attribute.query_all";
+        CompoundTag tag = new CompoundTag();
+        tag.put(TAG_VALUE, (Tag)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)NbtOps.INSTANCE, EnvironmentAttributeCommand.collectAllEnvironmentAttribute(source, queryDefaultValue)).getOrThrow());
+        source.sendSuccess(() -> Component.translatable(message, NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
         return 1;
     }
 
     private static <Value> int export(CommandSourceStack source, boolean exportDefaultValue) throws CommandSyntaxException {
-        EnvironmentAttributeMap.Builder generatedAttributes = EnvironmentAttributeMap.builder();
-        source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), EnvironmentAttributeCommand.getValue(source, (EnvironmentAttribute<Value>)attribute.value(), exportDefaultValue));});
-        EnvironmentAttributeMap generatedAttributesMap = generatedAttributes.build();
-        JsonElement json = (JsonElement)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)JsonOps.INSTANCE, generatedAttributesMap).getOrThrow();
+        JsonElement json = (JsonElement)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)JsonOps.INSTANCE, EnvironmentAttributeCommand.collectAllEnvironmentAttribute(source, exportDefaultValue)).getOrThrow();
         Path directory = source.getServer().getFile("debug/environment_attribute");
         String filename = (exportDefaultValue ? "default-" : "") + "environment-attribute-" + Util.getFilenameFormattedDateTime() + ".json";
         try {
@@ -117,9 +115,9 @@ public class EnvironmentAttributeCommand {
         }
     }
 
-    private static <Value> CompoundTag buildCompoundTag(AttributeType<Value> attributeType, Value value){
-        CompoundTag tag = new CompoundTag();
-        tag.put(TAG_VALUE, attributeType.valueCodec().encodeStart(NbtOps.INSTANCE, value).getOrThrow());
-        return tag;
+    private static <Value> EnvironmentAttributeMap collectAllEnvironmentAttribute(CommandSourceStack source, boolean defaultValue){
+        EnvironmentAttributeMap.Builder generatedAttributes = EnvironmentAttributeMap.builder();
+        source.getLevel().registryAccess().lookupOrThrow(Registries.ENVIRONMENT_ATTRIBUTE).listElements().forEach(attribute -> {generatedAttributes.set((EnvironmentAttribute<Value>)attribute.value(), EnvironmentAttributeCommand.getValue(source, (EnvironmentAttribute<Value>)attribute.value(), defaultValue));});
+        return generatedAttributes.build();
     }
 }
