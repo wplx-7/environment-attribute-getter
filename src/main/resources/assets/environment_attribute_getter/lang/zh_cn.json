@@ -4,5 +4,7 @@
   "commands.environment_attribute.export.success": "已将环境属性的值导出至%s",
   "commands.environment_attribute.query": "环境属性“%s”的值为：%s",
   "commands.environment_attribute.query.default": "环境属性“%s”的默认值为：%s",
+  "commands.environment_attribute.query_all": "环境属性的值为: %s",
+  "commands.environment_attribute.query_all.default": "环境属性的默认值为: %s",
   "debug.options.category.environment_attribute": "环境属性"
 }

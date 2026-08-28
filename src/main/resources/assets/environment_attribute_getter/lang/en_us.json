@@ -4,5 +4,7 @@
   "commands.environment_attribute.export.success": "Success to export the value of environment attributes to %s",
   "commands.environment_attribute.query": "The value of environment attribute '%s' is: %s",
   "commands.environment_attribute.query.default": "The default value of environment attribute '%s' is: %s",
+  "commands.environment_attribute.query_all": "The value of environment attribute is: %s",
+  "commands.environment_attribute.query_all.default": "The default value of environment attribute is: %s",
   "debug.options.category.environment_attribute": "Environment Attribute"
 }
