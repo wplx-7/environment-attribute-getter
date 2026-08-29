@@ -19,9 +19,6 @@
 		],
 		"client": [
 			"io.github.wplx_7.environmentattributegetter.client.EnvironmentAttributeGetterClient"
-		],
-		"fabric-datagen": [
-			"io.github.wplx_7.environmentattributegetter.client.EnvironmentAttributeGetterDataGenerator"
 		]
 	},
 	"mixins": [

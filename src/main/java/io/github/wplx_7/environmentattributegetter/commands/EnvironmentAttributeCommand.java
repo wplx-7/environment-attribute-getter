@@ -69,7 +69,7 @@ public class EnvironmentAttributeCommand {
         String message = queryDefaultValue ? "commands.environment_attribute.query.default": "commands.environment_attribute.query";
         CompoundTag tag = new CompoundTag();
         tag.put(TAG_VALUE, attribute.type().valueCodec().encodeStart(NbtOps.INSTANCE, EnvironmentAttributeCommand.getValue(source, attribute, queryDefaultValue)).getOrThrow());
-        source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
+        source.sendSuccess(() -> Component.translatable(message, attribute.toString(), NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), false);
         return 1;
     }
 
@@ -77,7 +77,7 @@ public class EnvironmentAttributeCommand {
         String message = queryDefaultValue ? "commands.environment_attribute.query_all.default": "commands.environment_attribute.query_all";
         CompoundTag tag = new CompoundTag();
         tag.put(TAG_VALUE, (Tag)EnvironmentAttributeMap.CODEC.encodeStart((DynamicOps)NbtOps.INSTANCE, EnvironmentAttributeCommand.collectAllEnvironmentAttribute(source, queryDefaultValue)).getOrThrow());
-        source.sendSuccess(() -> Component.translatable(message, NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), true);
+        source.sendSuccess(() -> Component.translatable(message, NbtUtils.toPrettyComponent(tag.get(TAG_VALUE))), false);
         return 1;
     }
 
@@ -96,9 +96,9 @@ public class EnvironmentAttributeCommand {
         }
         String fullFilename = "debug/environment_attribute/" + filename;
         if (exportDefaultValue) {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.default.success", fullFilename), true);
+            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.default.success", fullFilename), false);
         } else {
-            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.success", fullFilename), true);
+            source.sendSuccess(() -> Component.translatable("commands.environment_attribute.export.success", fullFilename), false);
         }
         return 1;
     }
